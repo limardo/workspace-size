@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# Workspaces hsize manager by Luca Limardo <luca.limardo@gmail.com>
+# Licensed under Apache License 2.0
+
+COMMAND=$(basename $0)
+CURRENT=$(gsettings get org.compiz.core:/org/compiz/profiles/unity/plugins/core/ hsize)
+
+function set {
+    if [ $1 -le 1 ]
+    then
+        echo "Workspaces disabled"
+    else
+        echo "$1 workspaces enabled"
+    fi
+
+    gsettings set org.compiz.core:/org/compiz/profiles/unity/plugins/core/ hsize $1
+}
+
+function increment {
+    INCR=$(expr $CURRENT + 1)
+
+    set $INCR
+}
+
+function decrement {
+    DECR=$(expr $CURRENT - 1)
+
+    [[ $DECR -lt 1 ]] && exit
+
+    set $DECR
+}
+
+[[ $COMMAND =~ -increment$ ]] && increment
+[[ $COMMAND =~ -decrement$ ]] && decrement
+
+exit 0
